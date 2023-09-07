@@ -7,7 +7,7 @@ function loadAndParseJsonFile(filename) {
       fs.readFileSync(`${__dirname}/data/${filename}`, "utf-8")
     );
   } catch (error) {
-    console.error(`Error reading or ${__dirname}/data/${filename}:`, error);
+    console.error(`Error reading or parsing ${__dirname}/data/${filename}:`, error);
     process.exit(1);
   }
 }
@@ -15,12 +15,12 @@ function loadAndParseJsonFile(filename) {
 // Format individual user's data
 function formatUserData(user, company) {
   const previousTokenBalance = user.tokens;
-  user.tokens += company.top_up;
+  const newTokenBalance = previousTokenBalance + company.top_up;
 
   const updatedUserInfo = `
             ${user.last_name}, ${user.first_name}, ${user.email}
               Previous Token Balance, ${previousTokenBalance}
-              New Token Balance ${user.tokens}`;
+              New Token Balance ${newTokenBalance}`;
 
   return updatedUserInfo;
 }
@@ -37,6 +37,7 @@ function generateFormattedOutput(companies, users) {
     const activeCompanyUsers = users.filter(
       (u) => u.company_id === company.id && u.active_status
     );
+    if (!activeCompanyUsers.length) continue;  // Skiping companies with no active users
 
     for (const user of activeCompanyUsers) {
       const userInfo = formatUserData(user, company);
@@ -68,4 +69,12 @@ companies.sort((a, b) => a.id - b.id);
 users.sort((a, b) => a.last_name.localeCompare(b.last_name));
 
 const output = generateFormattedOutput(companies, users);
-fs.writeFileSync(`${__dirname}/output/output.txt`, output);
+const outputPath = `${__dirname}/output/output.txt`;
+
+try {
+    fs.writeFileSync(outputPath, output);
+    console.log(`Output saved successfully to ${outputPath}`);
+  } catch (error) {
+    console.error(`Error writing to ${outputPath}:`, error);
+    process.exit(1);
+  }

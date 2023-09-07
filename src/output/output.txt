@@ -89,9 +89,3 @@
               New Token Balance 108
             Total amount of top ups for Purple Fish Inc.: 246
             
-    Company Id: 6
-    Company Name: Red Deer Inc.
-    Users Emailed:
-    Users Not Emailed:
-            Total amount of top ups for Red Deer Inc.: 0
-            
