@@ -9,6 +9,7 @@ Challenge Instructions:
 For detailed challenge instructions, please refer to the challenge.txt file in the root directory.
 
 File structure: 
+```bash
 TAKEHOME/
 │
 ├── src/
@@ -24,13 +25,16 @@ TAKEHOME/
 │
 ├── challenge.txt               # Contains the challenge instructions
 └── README.md                   # This documentation
+```
 
 Instructions to run it on your system - 
 1. Clone this repo
 2. Ensure you have Node.js installed.
 3. Navigate to the root directory (takehome)
 4. Run the script using the command:
-        node src/challenge.js
+    ```bash
+    node src/challenge.js
+    ```
 5. Once executed, the output.txt inside the output folder will be updated with the processed data
 
 Implementation:
