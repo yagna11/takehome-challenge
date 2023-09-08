@@ -55,9 +55,9 @@ TAKEHOME/
 6. Once executed, the output.txt inside the output folder will be updated with the processed data
 
 ## Testing
-To run the tests, run this command: 
+To run all the tests, run this command: 
 ```bash
-npx jest tests/challenge.test.js
+npm test
 ```
 ## Implementation:
 The challenge.js script processes the company and user data stored in the data folder. Based on defined criteria, it calculates the token top-ups for active users and generates an output indicating which users were potentially emailed about the top-up. The final result is written to the output.txt file in the output directory.
