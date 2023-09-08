@@ -1,0 +1,52 @@
+{
+    "users": [
+      {
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "company_id": 1,
+        "active_status": true,
+        "tokens": 100,
+        "email_status": true
+      },
+      {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@example.com",
+        "company_id": 1,
+        "active_status": false,
+        "tokens": 50,
+        "email_status": false
+      },
+      {
+        "first_name": "Yagna",
+        "last_name": "Patel",
+        "email": "yagna.patel@example.com",
+        "company_id": 2,
+        "active_status": true,
+        "tokens": 75,
+        "email_status": true
+      }
+    ],
+    "companies": [
+      {
+        "id": 1,
+        "name": "Company A",
+        "top_up": 50,
+        "email_status": true
+      },
+      {
+        "id": 2,
+        "name": "Company B",
+        "top_up": 75,
+        "email_status": false
+      },
+      {
+        "id": 3,
+        "name": "Company C",
+        "top_up": 100,
+        "email_status": true
+      }
+    ]
+  }
+  

@@ -126,3 +126,10 @@ writeToFile(output, "output.txt", (error, message) => {
     console.log(message);
   }
 });
+
+module.exports = {
+  readJSONFile,
+  isValidUser,
+  isValidCompany,
+  writeToFile
+};

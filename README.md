@@ -27,6 +27,13 @@ TAKEHOME/
 │   └── challenge.js            
 │       # The main script to process data and generate the `output.txt`
 │
+├── tests/
+│   ├── challenge.test.js            
+│   │   # Jest test suite for the challenge implementation
+│   └── mocks/
+│       └── challengeMockData.json
+│           # Mock data for testing
+│
 ├── challenge.txt               
 │   # Contains the challenge instructions
 └── README.md                   
@@ -35,14 +42,23 @@ TAKEHOME/
 
 ## Instructions to run it on your system - 
 1. Clone this repo
-2. Ensure you have Node.js installed.
-3. Navigate to the root directory (takehome)
-4. Run the script using the command:
+2. Ensure you have Node.js installed
+3. Run the command to install all the dependencies:
+    ```bash
+    npm i 
+    ``` 
+4. Navigate to the root directory (takehome)
+5. Run the script using the command:
     ```bash
     node src/challenge.js
     ```
-5. Once executed, the output.txt inside the output folder will be updated with the processed data
+6. Once executed, the output.txt inside the output folder will be updated with the processed data
 
+## Testing
+To run the tests, run this command: 
+```bash
+npx jest tests/challenge.test.js
+```
 ## Implementation:
 The challenge.js script processes the company and user data stored in the data folder. Based on defined criteria, it calculates the token top-ups for active users and generates an output indicating which users were potentially emailed about the top-up. The final result is written to the output.txt file in the output directory.
 
