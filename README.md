@@ -11,24 +11,24 @@ For detailed challenge instructions, please refer to the challenge.txt file in t
 ```bash
 TAKEHOME/
 │
+├── data/
+│   ├── companies.json   
+│   │   # Contains company data
+│   └── users.json              
+│       # Contains user data
+│
+├── output/
+│   ├── example_output.txt  
+│   │   # Provided example of expected output
+│   └── output.txt         
+│       # Generated output from the `challenge.js` script
+│
 ├── src/
-│   ├── data/
-│   │   ├── companies.json   
-            # Contains company data
-│   │   └── users.json              
-            # Contains user data
-│   │
-│   ├── output/
-│   │   ├── example_output.txt  
-            # Provided example of expected output
-│   │   └── output.txt         
-            # Generated output from the challenge.js script
-│   │
 │   └── challenge.js            
-        # The main script to process data and generate the output.txt
+│       # The main script to process data and generate the `output.txt`
 │
 ├── challenge.txt               
-    # Contains the challenge instructions
+│   # Contains the challenge instructions
 └── README.md                   
     # This documentation
 ```

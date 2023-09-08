@@ -1,108 +1,128 @@
 const fs = require("fs");
-
-// Constants
-const dataPath= `${__dirname}/data/`;
-const outputPath = `${__dirname}/output/output.txt`;
+const path = require("path");
 
 /**
- * Loads and parses a JSON file from the data directory.
- * 
- * @param {string} filename - The name of the file to be loaded.
+ * Reads and parses a JSON file.
+ *
+ * @param {string} fileName - The name of the file to be loaded.
  * @returns {Array} - The parsed JSON data.
- * @throws Will throw an error if reading or parsing fails.
  */
-
-function loadAndParseJsonFile(filename) {
-    try {
-        return JSON.parse(fs.readFileSync(`${dataPath}${filename}`, "utf-8"));
-    } catch (error) {
-        console.error(`Error reading or parsing ${dataPath}${filename}:`, error);
-        process.exit(1);
-    }
-}
-
-/**
- * Formats individual user's data with top-up calculation.
- * 
- * @param {Object} user - The user object.
- * @param {Object} company - The company object.
- * @returns {string} - The formatted user information.
- */
-
-function formatUserData(user, company) {
-  const previousTokenBalance = user.tokens;
-  const newTokenBalance = previousTokenBalance + company.top_up;
-
-  const updatedUserInfo = `
-            ${user.last_name}, ${user.first_name}, ${user.email}
-              Previous Token Balance, ${previousTokenBalance}
-              New Token Balance ${newTokenBalance}`;
-
-  return updatedUserInfo;
-}
-
-/**
- * Generates the output string based on companies and users data.
- * 
- * @param {Array} companies - List of company objects.
- * @param {Array} users - List of user objects.
- * @returns {string} - The formatted output string.
- */
-
-function generateFormattedOutput(companies, users) {
-  let output = "";
-
-  for (const company of companies) {
-    let totalCompanyTopup = 0;
-    let emailedUsers = [];
-    let notEmailedUsers = [];
-
-    const activeCompanyUsers = users.filter(
-      (u) => u.company_id === company.id && u.active_status
+const readJSONFile = (fileName) => {
+  try {
+    // Read and parse the JSON file from the data directory.
+    const data = fs.readFileSync(
+      path.join(__dirname, "..", "data", fileName),
+      "utf8"
     );
-    if (!activeCompanyUsers.length) continue;  // Skiping companies with no active users
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading ${fileName}: `, error);
+    return [];
+  }
+};
 
-    for (const user of activeCompanyUsers) {
-      const userInfo = formatUserData(user, company);
-      totalCompanyTopup += company.top_up;
+/**
+ * Writes data to a file.
+ *
+ * @param {string} data - The data to write.
+ * @param {string} fileName - The name of the output file.
+ * @param {function} callback - The callback to handle results.
+ */
+const writeToFile = (data, fileName, callback) => {
+  try {
+    // Write the data to the output directory.
+    fs.writeFileSync(path.join(__dirname, "..", "output", fileName), data);
+    callback(null, "Output file has been generated successfully.");
+  } catch (error) {
+    callback(error, null);
+  }
+};
 
-      if (user.email_status && company.email_status) {
-        emailedUsers.push(userInfo);
+/**
+ * Validates if a user is valid based on predefined rules.
+ *
+ * @param {Object} user - The user object.
+ * @returns {boolean} - Returns true if valid, otherwise false.
+ */
+const isValidUser = (user) => {
+  return (
+    user &&
+    typeof user.last_name === "string" &&
+    typeof user.active_status === "boolean"
+  );
+};
+
+/**
+ * Validates if a company is valid based on predefined rules.
+ *
+ * @param {Object} company - The company object.
+ * @returns {boolean} - Returns true if valid, otherwise false.
+ */
+const isValidCompany = (company) => {
+  return (
+    company &&
+    typeof company.id === "number" &&
+    typeof company.name === "string"
+  );
+};
+
+// Load users and companies data from respective JSON files.
+const users = readJSONFile("users.json");
+const companies = readJSONFile("companies.json");
+
+// Filter and sort valid companies and users.
+const validCompanies = companies
+  .filter(isValidCompany)
+  .sort((a, b) => a.id - b.id);
+const validUsers = users
+  .filter(isValidUser)
+  .sort((a, b) => a.last_name.localeCompare(b.last_name));
+
+let output = "";
+
+// Process each valid company.
+validCompanies.forEach((company) => {
+  let totalTopUps = 0;
+  let usersEmailed = "";
+  let usersNotEmailed = "";
+
+  // Check and process each user related to the company.
+  validUsers.forEach((user) => {
+    if (user.company_id === company.id && user.active_status) {
+      const prevTokens = user.tokens;
+      const newTokenBalance = prevTokens + company.top_up;
+      totalTopUps += company.top_up;
+
+      // Check the email status for both company and user.
+      const emailStatus = company.email_status && user.email_status;
+      const userInfo = `\t\t${user.last_name}, ${user.first_name}, ${user.email}\n\t\t\  Previous Token Balance, ${prevTokens}\n\t\t  New Token Balance ${newTokenBalance}\n`;
+
+      if (emailStatus) {
+        usersEmailed += userInfo;
       } else {
-        notEmailedUsers.push(userInfo);
+        usersNotEmailed += userInfo;
       }
     }
+  });
 
-    output += `
-    Company Id: ${company.id}
-    Company Name: ${company.name}
-    Users Emailed:${emailedUsers.join("")}
-    Users Not Emailed:${notEmailedUsers.join("")}
-            Total amount of top ups for ${company.name}: ${totalCompanyTopup}
-            `;
+  // If totalTopUps is zero, it means no active user was found for this company.
+  if (totalTopUps === 0) {
+    return; // Skip this iteration and move to the next company.
   }
 
-  return output;
-}
+  // Append processed company data to the output string.
+  output += `\n\tCompany Id: ${company.id}\n`;
+  output += `\tCompany Name: ${company.name}\n`;
+  output += `\tUsers Emailed:\n${usersEmailed}`;
+  output += `\tUsers Not Emailed:\n${usersNotEmailed}`;
+  output += `\t\tTotal amount of top ups for ${company.name}: ${totalTopUps}\n`;
+});
 
-function generateOutputFile() {
-    const companies = loadAndParseJsonFile("companies.json");
-    const users = loadAndParseJsonFile("users.json");
-
-    companies.sort((a, b) => a.id - b.id);
-    users.sort((a, b) => a.last_name.localeCompare(b.last_name));
-
-    const output = generateFormattedOutput(companies, users);
-
-    try {
-        fs.writeFileSync(outputPath, output);
-        console.log(`Output saved successfully to ${outputPath}`);
-    } catch (error) {
-        console.error(`Error writing to ${outputPath}:`, error);
-        process.exit(1);
-    }
-}
-
-generateOutputFile();
-
-
+// Write the processed output data to the output file.
+writeToFile(output, "output.txt", (error, message) => {
+  if (error) {
+    console.error(`An error occurred: ${error}`);
+  } else {
+    console.log(message);
+  }
+});
