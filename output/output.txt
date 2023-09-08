@@ -88,3 +88,4 @@
 		  Previous Token Balance, 26
 		  New Token Balance 108
 		Total amount of top ups for Purple Fish Inc.: 246
+

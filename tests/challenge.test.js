@@ -1,5 +1,4 @@
 const fs = require("fs");
-const path = require("path");
 const {
     readJSONFile,
     writeToFile,
@@ -61,7 +60,7 @@ describe('test isValidCompany', () => {
   });
 });
 
-describe('writeToFile', () => {
+describe('test writeToFile', () => {
     it('should call the callback with a success message on successful write', done => {
       const mockCallback = (error, message) => {
         expect(error).toBe(null);
